@@ -35,3 +35,5 @@ docker run -d --name $containerName --network $networkName ghcr.io/faraheloumi/p
 
 # Reload NGINX
 docker exec nginx nginx -s reload
+
+
