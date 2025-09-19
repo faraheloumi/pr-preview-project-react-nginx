@@ -31,5 +31,6 @@ if ($existingContainer) {
     Write-Host "No container named $containerName exists, skipping remove"
 }
 
+
 # Run le conteneur
 docker run -d --name $containerName --network $networkName ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
