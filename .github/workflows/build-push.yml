@@ -43,9 +43,12 @@ jobs:
     needs: build-and-push
     steps:
       - uses: actions/checkout@v3
-
       - name: Deploy
         shell: powershell
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_ACTION: ${{ github.event.action }}
+          GITHUB_EVENT_NUMBER: ${{ github.event.number }}
         run: |
           if ($env:GITHUB_EVENT_NAME -eq "push") {
             ./scripts/deploy_base.ps1
