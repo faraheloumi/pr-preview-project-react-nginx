@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   nginx:
     image: nginx:stable-alpine
@@ -14,7 +12,7 @@ services:
     networks:
       - pr-preview-net
   base-web:
-    image: ghcr.io/<user>/<repo>/web:latest
+    image: ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
     container_name: base-web
     networks:
       - pr-preview-net

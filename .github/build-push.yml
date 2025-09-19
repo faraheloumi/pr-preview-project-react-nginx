@@ -1,40 +1,32 @@
-name: Build and Push Docker
-
+name: Build and Push Docker Images
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    types: [opened, synchronize]
 
 jobs:
-  build-and-push:
+  build:
     runs-on: self-hosted
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-        
-
-      - name: Log in to GHCR
+      - name: Login to GHCR
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ secrets.GHCR_PAT }}
 
-      - name: Build Docker image
+      - name: Build & Push
         run: |
-          cd app
-          docker build -t ghcr.io/${{ github.repository }}/web:latest .
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            docker tag ghcr.io/${{ github.repository }}/web:latest ghcr.io/${{ github.repository }}/web:pr-${{ github.event.number }}
+          IMAGE=ghcr.io/${{ github.repository }}/web
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            TAG=pr-${{ github.event.number }}
+          else
+            TAG=latest
           fi
-
-      - name: Push Docker image
-        run: |
-          docker push ghcr.io/${{ github.repository }}/web:latest
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            docker push ghcr.io/${{ github.repository }}/web:pr-${{ github.event.number }}
-          fi
+          docker build -t $IMAGE:latest ./app
+          docker tag $IMAGE:latest $IMAGE:$TAG
+          docker push $IMAGE:latest
+          docker push $IMAGE:$TAG
