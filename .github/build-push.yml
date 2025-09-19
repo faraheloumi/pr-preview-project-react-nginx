@@ -8,10 +8,5 @@ jobs:
   test:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v3
-      - name: Runner info
-        run: |
-          echo "Runner info"
-          whoami
-          hostname
-          echo $RUNNER_NAME
+      - name: Hello
+        run: echo "Runner is working"
