@@ -1,17 +1,17 @@
-name: Build & Push Docker
+name: Test Runner
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-
 
 jobs:
-  build:
+  test:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      - name: Hello world
-        run: echo "Hello"
+      - name: Runner info
+        run: |
+          echo "Runner info"
+          whoami
+          hostname
+          echo $RUNNER_NAME
