@@ -1,25 +1,15 @@
 param([string]$PR_NUM)
 
-$PR_CONTAINER = "pr-$PR_NUM"
-
 # Login GHCR
 docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 
-# Pull l'image du PR
+# Pull image du PR
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
 
-# Stop + remove container PR si déjà existant
-try {
-    docker stop $PR_CONTAINER -ErrorAction Stop
-} catch {
-    Write-Host "No running container to stop for $PR_CONTAINER"
-}
-
-try {
-    docker rm $PR_CONTAINER -ErrorAction Stop
-} catch {
-    Write-Host "No existing container to remove for $PR_CONTAINER"
-}
+# Stop + remove si déjà existant
+$PR_CONTAINER = "pr-$PR_NUM"
+try { docker stop $PR_CONTAINER } catch { Write-Host "No running container for $PR_CONTAINER" }
+try { docker rm $PR_CONTAINER } catch { Write-Host "No existing container for $PR_CONTAINER" }
 
 # Run container du PR
 docker run -d --name $PR_CONTAINER --network pr-preview-net ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
@@ -27,7 +17,6 @@ docker run -d --name $PR_CONTAINER --network pr-preview-net ghcr.io/faraheloumi/
 # Générer conf NGINX pour ce PR
 $nginxTemplate = "nginx\pr-template.conf"
 $nginxTarget = "nginx\sites-enabled\pr-$PR_NUM.conf"
-
 Copy-Item $nginxTemplate $nginxTarget -Force
 (Get-Content $nginxTarget) -replace "PRNUMBER", $PR_NUM | Set-Content $nginxTarget
 

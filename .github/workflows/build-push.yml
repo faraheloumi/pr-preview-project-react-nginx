@@ -8,6 +8,9 @@ on:
 jobs:
   build-and-push:
     runs-on: self-hosted
+    env:
+      GITHUB_ACTOR: ${{ github.actor }}
+      GHCR_PAT: ${{ secrets.GHCR_PAT }}
     steps:
       - uses: actions/checkout@v3
 
@@ -21,9 +24,6 @@ jobs:
 
       - name: Build & Push
         shell: powershell
-        env:
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-          PR_NUMBER: ${{ github.event.number }}
         run: |
           $IMAGE = "ghcr.io/${{ github.repository }}/web"
 
@@ -41,6 +41,9 @@ jobs:
   deploy:
     runs-on: self-hosted
     needs: build-and-push
+    env:
+      GITHUB_ACTOR: ${{ github.actor }}
+      GHCR_PAT: ${{ secrets.GHCR_PAT }}
     steps:
       - uses: actions/checkout@v3
       - name: Deploy
