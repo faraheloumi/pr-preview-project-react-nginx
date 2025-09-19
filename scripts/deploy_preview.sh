@@ -1,10 +1,10 @@
 #!/bin/bash
 PR_NUM=$1
 
-docker pull ghcr.io/faraheloumi/react-nginx-pr-preview-pipeline/web:pr-$PR_NUM
+docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
 docker stop pr-$PR_NUM || true
 docker rm pr-$PR_NUM || true
-docker run -d --name pr-$PR_NUM --network pr-preview-net ghcr.io/faraheloumi/react-nginx-pr-preview-pipeline/web:pr-$PR_NUM
+docker run -d --name pr-$PR_NUM --network pr-preview-net ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
 
 # Générer conf NGINX
 cp nginx/pr-template.conf nginx/sites-enabled/pr-$PR_NUM.conf
