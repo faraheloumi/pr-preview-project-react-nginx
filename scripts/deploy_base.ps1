@@ -1,7 +1,7 @@
 # deploy_base.ps1
 
 # Chemin vers le docker-compose.yml
-$composeFile = "..\infra\docker-compose.yml"
+$composeFile = "C:\Users\HP\OneDrive - SUPCOM\Bureau\react-nginx-pr-preview-pipeline-\infra"
 
 
 # Login GHCR
