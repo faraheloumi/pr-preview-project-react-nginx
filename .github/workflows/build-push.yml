@@ -1,12 +1,32 @@
-name: Test Runner
+name: Build and Push Docker Images
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
-  test:
+  build:
     runs-on: self-hosted
     steps:
-      - name: Hello
-        run: echo "Runner is working"
+      - uses: actions/checkout@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
+
+      - name: Build & Push
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}/web
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            TAG=pr-${{ github.event.number }}
+          else
+            TAG=latest
+          fi
+          docker build -t $IMAGE:latest ./app
+          docker tag $IMAGE:latest $IMAGE:$TAG
+          docker push $IMAGE:latest
+          docker push $IMAGE:$TAG
