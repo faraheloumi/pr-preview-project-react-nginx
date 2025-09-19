@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, closed]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            bash ./scripts/deploy_base.sh
+          elif [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            if [ "$GITHUB_EVENT_ACTION" = "closed" ]; then
+              bash ./scripts/remove_preview.sh $GITHUB_EVENT_NUMBER
+            else
+              bash ./scripts/deploy_preview.sh $GITHUB_EVENT_NUMBER
+            fi

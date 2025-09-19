@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../nginx/conf.d:/etc/nginx/conf.d
+      - ../nginx/sites-enabled:/etc/nginx/sites-enabled
+      - ../nginx/certs:/etc/letsencrypt/live
+    networks:
+      - pr-preview-net
+  base-web:
+    image: ghcr.io/<user>/<repo>/web:latest
+    container_name: base-web
+    networks:
+      - pr-preview-net
+
+networks:
+  pr-preview-net:
+    driver: bridge
