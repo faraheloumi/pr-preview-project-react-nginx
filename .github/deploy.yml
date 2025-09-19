@@ -1,24 +1,36 @@
-name: Deploy
+name: Deploy Base / PR Preview
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    types: [opened, synchronize, closed]
+    branches: [ main ]
+  pull_request_closed:
 
 jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Deploy
+      - name: Deploy base site
+        if: github.ref == 'refs/heads/main'
         run: |
-          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
-            bash ./scripts/deploy_base.sh
-          elif [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-            if [ "$GITHUB_EVENT_ACTION" = "closed" ]; then
-              bash ./scripts/remove_preview.sh $GITHUB_EVENT_NUMBER
-            else
-              bash ./scripts/deploy_preview.sh $GITHUB_EVENT_NUMBER
-            fi
+          cd scripts
+          bash deploy_base.sh
+
+      - name: Deploy PR preview
+        if: github.event_name == 'pull_request' && github.event.action != 'closed'
+        run: |
+          PR_NUM=${{ github.event.number }}
+          PORT=$((30000 + PR_NUM))
+          cd scripts
+          bash deploy_preview.sh $PR_NUM $PORT
+
+      - name: Remove PR preview on close
+        if: github.event_name == 'pull_request' && github.event.action == 'closed'
+        run: |
+          PR_NUM=${{ github.event.number }}
+          cd scripts
+          bash remove_preview.sh $PR_NUM
