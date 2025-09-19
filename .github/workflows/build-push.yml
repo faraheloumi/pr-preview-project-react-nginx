@@ -26,12 +26,15 @@ jobs:
           PR_NUMBER: ${{ github.event.number }}
         run: |
           $IMAGE = "ghcr.io/${{ github.repository }}/web"
+
           if ($env:GITHUB_EVENT_NAME -eq "pull_request") {
             $TAG = "pr-$env:PR_NUMBER"
           } else {
             $TAG = "latest"
           }
-          docker build -t "$IMAGE:latest" ./app
-          docker tag "$IMAGE:latest" "$IMAGE:$TAG"
-          docker push "$IMAGE:latest"
-          docker push "$IMAGE:$TAG"
+
+          docker build -t "${IMAGE}:latest" ./app
+          docker tag "${IMAGE}:latest" "${IMAGE}:${TAG}"
+          docker push "${IMAGE}:latest"
+          docker push "${IMAGE}:${TAG}"
+
