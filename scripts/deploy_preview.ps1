@@ -1,14 +1,14 @@
 param([string]$PR_NUM)
 
+$PR_CONTAINER = "pr-$PR_NUM"
+
 # Login GHCR
 docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 
-# Pull image du PR
+# Pull l'image du PR
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
 
-# Stop + remove si déjà existant
-$PR_CONTAINER = "pr-$PR_NUM"
-
+# Stop + remove container PR si déjà existant
 try {
     docker stop $PR_CONTAINER -ErrorAction Stop
 } catch {
@@ -21,7 +21,7 @@ try {
     Write-Host "No existing container to remove for $PR_CONTAINER"
 }
 
-# Run container du PR (ex: map sur port dynamique)
+# Run container du PR
 docker run -d --name $PR_CONTAINER --network pr-preview-net ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
 
 # Générer conf NGINX pour ce PR

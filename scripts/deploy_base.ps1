@@ -1,17 +1,26 @@
 # Créer le network Docker s’il n’existe pas déjà
-docker network create pr-preview-net --driver bridge 2>$null
+docker network create pr-preview-net --driver bridge -ErrorAction SilentlyContinue
 
 # Login GHCR
 docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 
-# Pull et lancer container base
+# Pull l'image de base
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 
-# Stop + remove si déjà existant
-docker stop base-web 2>$null || echo "no container"
-docker rm base-web 2>$null || echo "no container"
+# Stop + remove container base si déjà existant
+try {
+    docker stop base-web -ErrorAction Stop
+} catch {
+    Write-Host "No running container to stop for base-web"
+}
 
-# Run le conteneur de base (port 3000 -> 3000 ou autre selon ton app)
+try {
+    docker rm base-web -ErrorAction Stop
+} catch {
+    Write-Host "No existing container to remove for base-web"
+}
+
+# Run le conteneur de base
 docker run -d --name base-web --network pr-preview-net ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 
 # Reload NGINX
