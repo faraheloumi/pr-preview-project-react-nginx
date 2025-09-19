@@ -20,6 +20,7 @@ jobs:
 
 
       - name: Build & Push
+        shell: bash
         run: |
           IMAGE=ghcr.io/${{ github.repository }}/web
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
