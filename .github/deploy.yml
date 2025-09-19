@@ -34,3 +34,4 @@ jobs:
           PR_NUM=${{ github.event.number }}
           cd scripts
           bash remove_preview.sh $PR_NUM
+          

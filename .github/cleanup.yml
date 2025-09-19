@@ -11,3 +11,4 @@ jobs:
       - name: Remove preview
         run: |
           bash scripts/remove_preview.sh ${{ github.event.number }}
+          
