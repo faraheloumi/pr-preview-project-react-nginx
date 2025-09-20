@@ -17,7 +17,7 @@ services:
     volumes:
       - ../app/certs:/etc/nginx/certs:ro
       - ../app/nginx/:/etc/nginx/:ro
-          
+        
     ports:
       - "80:80"
       - "443:443"
