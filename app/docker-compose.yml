@@ -4,7 +4,7 @@ services:
   react-app:
     #build: ./react-app
     image: ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
-    container_name: pr-project-container
+    container_name: pr-pipeline-project-container
     ports:
     #expose:
       - "3000:80"      
@@ -13,7 +13,7 @@ services:
 
   nginx-proxy:
     image: nginx:stable-alpine
-    container_name: nginx-proxy
+    container_name: nginx-proxy-duckdns
     volumes:
       - ./certs:/etc/nginx/certs:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -26,6 +26,14 @@ services:
       - react-app
     networks:
       - pr-preview-net
+
+  # certbot:
+  #   image: certbot/certbot:latest
+  #   container_name: certbot
+  #   volumes:
+  #     - ./certs:/etc/letsencrypt
+  #   networks:
+  #     - pr-preview-net
 
 networks:
   pr-preview-net:
