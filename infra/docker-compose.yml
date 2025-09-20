@@ -15,9 +15,9 @@ services:
     image: nginx:stable-alpine
     container_name: nginx-proxy
     volumes:
-      - ../app/certs:/etc/nginx/certs:ro
       - ../app/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ../app/nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+      - ../app/certs:/etc/nginx/certs:ro
     ports:
       - "80:80"
       - "443:443"
