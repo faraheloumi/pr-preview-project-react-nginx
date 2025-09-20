@@ -4,7 +4,7 @@ docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 # Pull image
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 
-docker compose -f ../infra/docker-compose.yml up -d
+docker compose -f ../app/docker-compose.yml up -d
 
 
 # Vérifier si le container existe
