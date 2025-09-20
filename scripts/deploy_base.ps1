@@ -1,10 +1,21 @@
-# Login GHCR
 docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 
-# Pull image
+# Générer .env avec le tag latest
+Set-Content ../app/.env "IMAGE_TAG=latest"
+
+# Copier la conf Nginx prod
+Copy-Item ../app/nginx/base.conf ../app/nginx/sites-enabled/base.conf -Force
+
+# Pull image latest
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 
-docker compose -f ../app/docker-compose.yml up -d
+# Lancer les conteneurs
+docker compose -f ../app/docker-compose.yml --env-file ../app/.env up -d
+
+# Recharger Nginx pour appliquer la nouvelle conf
+docker exec nginx-proxy-duckdns nginx -s reload
+
+
 
 
 

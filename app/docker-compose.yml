@@ -2,8 +2,7 @@ version: '3.8'
 
 services:
   react-app:
-    #build: ./react-app
-    image: ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
+    image: ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:${IMAGE_TAG}
     container_name: pr-pipeline-project-container
     ports:
     #expose:
@@ -26,14 +25,6 @@ services:
       - react-app
     networks:
       - pr-preview-net
-
-  # certbot:
-  #   image: certbot/certbot:latest
-  #   container_name: certbot
-  #   volumes:
-  #     - ./certs:/etc/letsencrypt
-  #   networks:
-  #     - pr-preview-net
 
 networks:
   pr-preview-net:
