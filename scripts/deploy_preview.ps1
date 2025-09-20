@@ -6,7 +6,7 @@ docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 Set-Content ../app/.env "IMAGE_TAG=pr-$PR_NUM"
 
 # Générer la conf Nginx spécifique à la PR
-(Get-Content ../app/nginx/pr-template.conf) -replace "PRNUMBER", $PR_NUM | Set-Content ../app/nginx/sites-enabled/pr-$PR_NUM.conf
+(Get-Content ../app/nginx/sites-enabled/pr-template.conf) -replace "PRNUMBER", $PR_NUM | Set-Content ../app/nginx/sites-enabled/pr-$PR_NUM.conf
 
 # Pull image PR
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM

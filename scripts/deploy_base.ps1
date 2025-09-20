@@ -4,7 +4,7 @@ docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 Set-Content ../app/.env "IMAGE_TAG=latest"
 
 # Copier la conf Nginx prod
-Copy-Item ../app/nginx/base.conf ../app/nginx/sites-enabled/base.conf -Force
+Copy-Item ../app/nginx/sites-enabled/base.conf ../app/nginx/sites-enabled/base.conf -Force
 
 # Pull image latest
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
