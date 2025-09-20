@@ -7,6 +7,7 @@ docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 docker compose -f ../app/docker-compose.yml up -d
 
 
+
 # Vérifier si le container existe
 # $existingContainer = docker ps -a --filter "name=$containerName" --format "{{.Names}}"
 
