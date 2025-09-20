@@ -18,7 +18,7 @@ services:
       - ../app/certs:/etc/nginx/certs:ro
       - ../app/nginx/conf.d:/etc/nginx/conf.d:ro
       - ../app/nginx/sites-enabled:/etc/nginx/sites-enabled:ro 
-      
+    
     ports:
       - "80:80"
       - "443:443"
