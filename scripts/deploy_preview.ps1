@@ -15,7 +15,7 @@ docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
 docker compose -f ../app/docker-compose.yml --env-file ../app/.env up -d
 
 # Recharger Nginx pour appliquer la nouvelle conf
-docker exec nginx-proxy-duckdns nginx -s reload
+docker exec nginx-proxy nginx -s reload
 
 
 
