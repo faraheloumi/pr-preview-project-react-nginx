@@ -24,3 +24,5 @@ docker compose -f ../infra/docker-compose.yml up -d
 #     docker run -d --name $containerName --network $networkName ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 #     Write-Host "Container $containerName created and started"
 # }
+
+
