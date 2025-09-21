@@ -82,6 +82,82 @@ project/
 ```
 
 ## 🏗️ Project Architecture
+## Full CI/CD Pipeline
+```text
+                       +-----------------------+
+                       |      Developers       |
+                       |  git push / PR open   |
+                       +-----------+-----------+
+                                   |
+                                   v
+                    +-------------------------------+
+                    |     GitHub Actions            |
+                    |                               |
+   +----------------+-----------------+-------------+---------------------------+
+   | Build & Push (on push/PR)        | Deploy (workflow_run after Build & Push)|
+   |  - builds ./app Docker image     |   - main -> deploy_base.ps1             |
+   |  - pushes to GHCR:               |   - PR   -> deploy_preview.ps1          |
+   | (push) ghcr.io/<repo>/web:latest | Cleanup (PR closed)                     |
+   | (PR)   ghcr.io/<repo>/web:pr-<n> |   - remove_preview.ps1                  |
+   +----------------+-----------------+-----------------------------------------+
+                                      |
+                                      v
+                          (Github self-hosted runner)
+    +--------------------------------------------------------------------------+
+    |                             Docker Host                                  |
+    |                                                                          |
+    |  PowerShell scripts:                                                     |
+    |   - scripts/deploy_base.ps1                                              |
+    |   - scripts/deploy_preview.ps1                                           |
+    |   - scripts/remove_preview.ps1                                           |
+    |                                                                          |
+    |  Pulls images from GHCR                                                  |
+    |      (push) ghcr.io/<repo>/web:latest                                    |    
+    |      (PR)   ghcr.io/<repo>/web:pr-<n>                                    |    
+    |                                                                          |
+    |  +------------------ Docker network: webnet ----------------------+      |
+    |  |                      +------------------+                      |      |
+    |  |                      |   nginx-proxy    |                      |      |
+    |  |                      |                  |                      |      |
+    |  |                      |   ports 80/443   |                      |      |
+    |  |                      +---------+--------+                      |      |
+    |  |                                | proxy_pass                    |      |
+    |  |             +-----------------------------------+              |      |
+    |  |             |                                   |              |      |  
+    |  |   +---------v---------+         +---------------v-----------+  |      |   
+    |  |   | react-app-main    |         |       web-pr-<n>          |  |      |   
+    |  |   |     (main)        |         |  (one per open PR)        |  |      |   
+    |  |   | image :latest     |         |      image :pr-<n>        |  |      |   
+    |  |   +-------------------+         +---------------------------+  |      |   
+    |  +----------------------------------------------------------------+      |
+    |                                                                          |
+    +--------------------------------------------------------------------------+   
+```
+
+## User Interaction Flow
+
+```text
+External User (Browser)
+    |
+    | 1. enters farahelloumi.duckdns.org 
+    | or pr-<n>.farahelloumi.duckdns.org
+    v
+DuckDNS (DNS)
+    |
+    | 2. resolves host → server public IP
+    v
+Self-Hosted Server
+    |
+    v
++------------------+
+|    NGINX proxy   |  (routes by hostname)
++--------+---------+
+         |
+   +-----+-------------------+
+   |                         |
+   v                         v
+react-app-main          web-pr-<n>
+(main branch app)       (preview app for PR)
 
 ## 🔑 Prerequisites
 Before using this project, make sure you have the following installed and configured:
