@@ -11,5 +11,6 @@ services:
 
 networks:
   webnet:
+    name: webnet
     external: true
 

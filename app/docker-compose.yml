@@ -22,4 +22,5 @@ services:
 
 networks:
   webnet:
+    name: webnet
     driver: bridge
