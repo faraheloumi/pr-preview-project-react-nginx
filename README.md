@@ -191,15 +191,17 @@ Before using this project, make sure you have the following installed and config
 - Note the IP address returned (this is your public IP).
 4. Configure Port Forwarding on Your Router
 To make your server accessible from the internet:
-    1. Log in to your router (in my case, Orange Fixbox) by opening a browser and typing: ```192.168.1.1```.
-    2. Go to Advanced Settings → Security → Virtual Server.
-    3. Add a new rule:
+    1. Log in to your router (in my case, Orange Fixbox) by opening a browser and typing your Default Gateway IP address.
+          Open  Command Prompt and type: ```ipconfig``` (on windows) and then look for the Default Gateway IP address.
+    2. Log in using the username/password on the sticker of your router (username: admin)     
+    3. Go to Advanced Settings → Security → Virtual Server.
+    4. Add a new rule:
         - Name: duckdns-http
         - WAN Port: 80-80
         - LAN IP Address: your IPv4 when you tap ipconfig
         - LAN Port: 80-80
         - Protocol: TCP
-    4. Add another rule:
+    5. Add another rule:
         - Name: duckdns-https
         - WAN Port: 443-443
         - LAN IP Address: your IPv4 when you tap ipconfig
@@ -224,6 +226,27 @@ Then, NGINX is configured to use them:
 ssl_certificate     /etc/nginx/certs/nginx-selfsigned.crt;
 ssl_certificate_key /etc/nginx/certs/nginx-selfsigned.key;
 ```
+
+## 🔐 PAT Configuration:
+To allow GitHub Actions to push and pull Docker images from GitHub Container Registry (GHCR), you need to create and configure a Personal Access Token (PAT).
+1. **Generate a Personal Access Token**
+    1. Go to GitHub → Settings → Developer settings → Personal Access Tokens
+    2. Click “Tokens (classic)” → Generate new token (classic).
+    3. Select the following scopes:
+        - ```write:packages``` → required to push images to GHCR.
+        - ```read:packages``` → required to pull images from GHCR.
+        - ```delete:packages``` → (optional) required for cleanup workflows.
+        - ```repo``` → (optional) if you want workflows to also access your repo content.
+    4. Click Generate token and copy the token because you won’t be able to see it again.
+2. **Add PAT as a GitHub Secret**
+    1. Go to your repository on GitHub.
+    2. Navigate to: Settings → Secrets and variables → Actions → New repository secret
+    3. Add a new secret:
+        - Name: ```GHCR_PAT```
+        - Value: paste the PAT you generated.
+    4. Click Add secret.
+
+
 ### 1️⃣ Local Build & Run
 ```
 # move into app folder
