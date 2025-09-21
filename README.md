@@ -158,6 +158,7 @@ Self-Hosted Server
    v                         v
 react-app-main          web-pr-<n>
 (main branch app)       (preview app for PR)
+```
 
 ## 🔑 Prerequisites
 Before using this project, make sure you have the following installed and configured:
