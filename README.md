@@ -6,9 +6,9 @@
 - [📁 Directory Structure](#-directory-structure)
 - [🏗️ Project Architecture](#%EF%B8%8F-project-architecture)
 - [🔑 Prerequisites](#-prerequisites)
-- [⚙️ SetUp Instructions](#-setup-instructions)
-- [🌍 Domain & HTTPS Setup](#-domain-&-https-setup)
-- [🔐 Secrets & Security](#-secrets-&-security)
+- [🌍 DuckDNS Configuration & Port Forwarding](#-setup-instructions)
+- [⚙️ HTTPS Configuration](#-domain-&-https-setup)
+- [🔐 PAT Configuration](#-secrets-&-security)
 - [🚀 CI/CD Workflow](#-ci/cd-workflow)
 - [🗑️ PR Cleanup Process](#-pr-cleanup-process)
 - [📈 Results](#-resultat)
@@ -209,7 +209,7 @@ To make your server accessible from the internet:
         - Protocol: TCP
     5. Save the settings to apply the configuration.
 
-## ⚙️ HTTPS Configuration:
+## ⚙️ HTTPS Configuration
 To generate the certificate and key, the following command was likely used:
 
 ```plaintext
@@ -227,7 +227,7 @@ ssl_certificate     /etc/nginx/certs/nginx-selfsigned.crt;
 ssl_certificate_key /etc/nginx/certs/nginx-selfsigned.key;
 ```
 
-## 🔐 PAT Configuration:
+## 🔐 PAT Configuration
 To allow GitHub Actions to push and pull Docker images from GitHub Container Registry (GHCR), you need to create and configure a Personal Access Token (PAT).
 1. **Generate a Personal Access Token**
     1. Go to GitHub → Settings → Developer settings → Personal Access Tokens
