@@ -2,22 +2,33 @@ param([string]$PR_NUM)
 
 docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 
-# Générer .env avec le tag PR
-# Set-Content ../app/.env "IMAGE_TAG=pr-$PR_NUM"
+$RepoRoot        = Split-Path -Parent $PSScriptRoot
 
-# Générer la conf Nginx spécifique à la PR
-(Get-Content ../app/docker-compose.pr.TEMPLATE.yml) -replace "PRNUMBER", $PR_NUM | Set-Content ../app/docker-compose.pr.$PR_NUM.yml
+# Compose templates/files
+$TemplateCompose = Join-Path $RepoRoot "app\docker-compose.pr.TEMPLATE.yml"
+$WorkCompose     = Join-Path $RepoRoot ("app\docker-compose.pr.{0}.yml" -f $PR_NUM)
 
-(Get-Content ../app/nginx/sites-enabled/pr-template.conf) -replace "PRNUMBER", $PR_NUM | Set-Content ../app/nginx/sites-enabled/pr-$PR_NUM.conf
+# NGINX site template now lives OUTSIDE sites-enabled (so nginx doesn't parse it directly)
+$TemplateSiteDir = Join-Path $RepoRoot "app\nginx\templates"
+$TemplateSite    = Join-Path $TemplateSiteDir "pr-template.conf"
+
+# Real vhost files go under sites-enabled (mounted into the nginx container)
+$SitesEnabledDir = Join-Path $RepoRoot "app\nginx\sites-enabled"
+$WorkSite        = Join-Path $SitesEnabledDir ("pr-{0}.conf" -f $PR_NUM) 
+
+# Replace PRNUMBER in compose template 
+(Get-Content $TemplateCompose )  -replace "PRNUMBER", $PR_NUM  |  Set-Content $WorkCompose
+
+# Replace PRNUMBER in pr-template.conf
+(Get-Content $TemplateSite)  -replace "PRNUMBER", $PR_NUM  |  Set-Content $WorkSite
 
 # Pull image PR
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
 
 # Lancer les conteneurs
-docker compose -f "../app/docker-compose.pr.$PR_NUM.yml" up -d
+docker compose -f $WorkCompose up -d
 
 docker exec nginx-proxy nginx -t
-
 
 # Recharger Nginx pour appliquer la nouvelle conf
 docker exec nginx-proxy nginx -s reload
