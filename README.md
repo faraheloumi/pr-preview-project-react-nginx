@@ -246,6 +246,20 @@ To allow GitHub Actions to push and pull Docker images from GitHub Container Reg
         - Value: paste the PAT you generated.
     4. Click Add secret.
 
+## 🖥️ Setup a Self-Hosted GitHub Runner
+1. Prepare your server
+- Choose a machine (Linux, Windows, or macOS): in my case Windows.
+- Install Docker and any other tools required for your workflows.
+- Make sure Git is installed.
+2. Add a runner in GitHub
+    1. Go to your repository on GitHub: Settings → Actions → Runners → New self-hosted runner
+    2. Select:
+        - OS Window
+        - Architecture x64
+3. Install the runner
+On your server, run the commands provided by GitHub.
+```
+
 
 ### 1️⃣ Local Build & Run
 ```

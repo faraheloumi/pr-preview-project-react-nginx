@@ -1,53 +1,16 @@
 $ErrorActionPreference = "Stop"
-$RepoRoot = Split-Path -Parent $PSScriptRoot  # this resolves to your repo root
+$RepoRoot = Split-Path -Parent $PSScriptRoot
 
-# deploy_base.ps1: point to the compose INSIDE YOUR REPO
 $ComposeFile = Join-Path $RepoRoot "app\docker-compose.yml"
 
 docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 
-# Générer .env avec le tag latest
-# Set-Content ../app/.env "IMAGE_TAG=latest"
-
-# Copier la conf Nginx prod
-#C<opy-Item ../app/nginx/sites-enabled/base.conf ../app/nginx/sites-enabled/base.conf -Force
-
-# Pull image latest
-
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 
-# Lancer les conteneurs
 docker compose -f $ComposeFile up -d
-
 
 docker exec nginx-proxy nginx -t
 
-# Recharger Nginx pour appliquer la nouvelle conf
 docker exec nginx-proxy nginx -s reload
 
-
-
 echo "✅ Main deployed: https://farahelloumi.duckdns.org" 
-
-
-
-
-# Vérifier si le container existe
-# $existingContainer = docker ps -a --filter "name=$containerName" --format "{{.Names}}"
-
-# if ($existingContainer) {
-#     # Si le container existe mais n'est pas en cours d'exécution, le démarrer
-#     $runningContainer = docker ps --filter "name=$containerName" --format "{{.Names}}"
-#     if (-not $runningContainer) {
-#         docker start $containerName
-#         Write-Host "Container $containerName started"
-#     } else {
-#         Write-Host "Container $containerName is already running"
-#     }
-# } else {
-#     # Si le container n'existe pas, le créer et le lancer
-#     docker run -d --name $containerName --network $networkName ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
-#     Write-Host "Container $containerName created and started"
-# }
-
-
