@@ -1,9 +1,42 @@
-# 🚀 React PR Preview Pipeline with NGINX + Docker + GHCR +DuckDns
+# 🚀 CI/CD Pipeline for React App with PR Previews on NGINX using DuckDNS + GHCR + GitHub Actions
+
+## Table of Contents
+
+- [📌 Project Overview](#-project-overview)
+- [📁 Directory Structure](#-directory-structure)
+- [🏗️ Project Architecture](#%EF%B8%8F-project-architecture)
+- [🔑 Prerequisites](#-prerequisites)
+- [⚙️ SetUp Instructions](#-setup-instructions)
+- [🌍 Domain & HTTPS Setup](#-domain-&-https-setup)
+- [🔐 Secrets & Security](#-secrets-&-security)
+- [🚀 CI/CD Workflow](#-ci/cd-workflow)
+- [🗑️ PR Cleanup Process](#-pr-cleanup-process)
+- [📈 Results](#-resultat)
+- [🔧 Usage](#-usage)
+- [🔮 Future Considerations](#-future-considerations)
+- [🤝 Contributing](#-contributing)
+- [👨‍💻 Project By](#project-by)
 
 ## 📌 Project Overview
-This project implements a CI/CD pipeline to automatically build, deploy, and preview a React application.  
-The app is containerized with Docker, served behind **NGINX** with HTTPS via DuckDNS, and deployed through **GitHub Actions**.  
-Each Pull Request (PR) generates a **unique public preview URL** so reviewers can validate UI changes before merging.  
+This project implements a DevOps pipeline for PR previews of a React application using Docker, NGINX, DuckDNS, GitHub Actions, and GitHub Container Registry (GHCR).
+
+The goal is to automatically deploy the base application and every Pull Request (PR) to a public URL, so that UI changes can be reviewed in real time before merging.
+
+The base application is deployed at a public DuckDNS domain secured with HTTPS (Let’s Encrypt).
+
+For each open PR, a dedicated container image is built in CI, pushed to GHCR, pulled on the server, and served under a unique subdomain (e.g., https://pr-17.username.duckdns.org).
+
+On PR merge or close, the preview container and its NGINX route are automatically cleaned up, and the registry tag is deleted.
+
+This setup ensures:
+
+- 🔄 Automated CI/CD with GitHub Actions.
+
+- 📦 Immutable deployments using container images as the only artifact.
+
+- 🌍 Public and secure previews accessible over HTTPS.
+
+- 🧹 Full lifecycle management (build → deploy → cleanup).
 
 ---
 
