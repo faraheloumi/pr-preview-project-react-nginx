@@ -14,7 +14,7 @@ docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
 
 # Lancer les conteneurs
-docker compose -f ../app/docker-compose.pr.$PR_NUM.yml up -d
+docker compose -f "../app/docker-compose.pr.$PR_NUM.yml" up -d
 
 docker exec nginx-proxy nginx -t
 

@@ -1,3 +1,9 @@
+$ErrorActionPreference = "Stop"
+$RepoRoot = Split-Path -Parent $PSScriptRoot  # this resolves to your repo root
+
+# deploy_base.ps1: point to the compose INSIDE YOUR REPO
+$ComposeFile = Join-Path $RepoRoot "app\docker-compose.yml"
+
 docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 
 # Générer .env avec le tag latest
@@ -7,10 +13,11 @@ docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 #C<opy-Item ../app/nginx/sites-enabled/base.conf ../app/nginx/sites-enabled/base.conf -Force
 
 # Pull image latest
+
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 
 # Lancer les conteneurs
-docker compose -f ../app/docker-compose.yml up -d
+docker compose -f $ComposeFile up -d
 
 
 docker exec nginx-proxy nginx -t
