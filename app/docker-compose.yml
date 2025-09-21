@@ -5,15 +5,7 @@ services:
     image: ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
     container_name: react-app-main
     networks:
-      - pr-preview-net
-    profiles: ["main"]
-
-  react-app-pr:
-    image: ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:${IMAGE_TAG}
-    container_name: pr-project-${PR_NUM}
-    networks:
-      - pr-preview-net
-    profiles: ["pr"]
+      - webnet
 
   nginx-proxy:
     image: nginx:stable-alpine
@@ -26,8 +18,8 @@ services:
       - "80:80"
       - "443:443"
     networks:
-      - pr-preview-net
+      - webnet
 
 networks:
-  pr-preview-net:
+  webnet:
     driver: bridge
