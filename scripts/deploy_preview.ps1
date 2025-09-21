@@ -6,16 +6,20 @@ docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 # Set-Content ../app/.env "IMAGE_TAG=pr-$PR_NUM"
 
 # Générer la conf Nginx spécifique à la PR
+(Get-Content ../app/docker-compose.pr.TEMPLATE.yml) -replace "PRNUMBER", $PR_NUM | Set-Content ../app/docker-compose.pr.$PR_NUM.yml
+
 (Get-Content ../app/nginx/sites-enabled/pr-template.conf) -replace "PRNUMBER", $PR_NUM | Set-Content ../app/nginx/sites-enabled/pr-$PR_NUM.conf
 
 # Pull image PR
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-$PR_NUM
 
 # Lancer les conteneurs
-docker compose -f ../app/docker-compose.yml --profile pr up -d
+docker compose -f "../app/docker-compose.pr.$PR_NUM.yml" up -d
 
 # Recharger Nginx pour appliquer la nouvelle conf
 docker exec nginx-proxy nginx -s reload
+
+echo "✅ Preview deployed: https://pr-${PR_NUM}.farahelloumi.duckdns.org" 
 
 
 

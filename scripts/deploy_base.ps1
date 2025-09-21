@@ -4,17 +4,18 @@ docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 # Set-Content ../app/.env "IMAGE_TAG=latest"
 
 # Copier la conf Nginx prod
-Copy-Item ../app/nginx/sites-enabled/base.conf ../app/nginx/sites-enabled/base.conf -Force
+#C<opy-Item ../app/nginx/sites-enabled/base.conf ../app/nginx/sites-enabled/base.conf -Force
 
 # Pull image latest
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 
 # Lancer les conteneurs
-docker compose -f ../app/docker-compose.yml --profile main up -d
+docker compose -f "../app/docker-compose.yml" up -d
 
 # Recharger Nginx pour appliquer la nouvelle conf
 docker exec nginx-proxy nginx -s reload
 
+echo "✅ Main deployed: https://farahelloumi.duckdns.org" 
 
 
 
