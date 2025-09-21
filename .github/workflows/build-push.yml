@@ -45,6 +45,7 @@ jobs:
     needs: build-and-push
     env:
       GITHUB_ACTOR: ${{ github.actor }}
+      
       GHCR_PAT: ${{ secrets.GHCR_PAT }}
     steps:
       - uses: actions/checkout@v3
