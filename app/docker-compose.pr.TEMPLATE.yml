@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web-pr-PRNUMBER:
     image: ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:pr-PRNUMBER
-    container_name: pr-PRNUMBER 
+    container_name: web-pr-PRNUMBER 
     expose:
       - "80"
     networks:

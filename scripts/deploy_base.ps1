@@ -10,7 +10,7 @@ docker login ghcr.io -u $env:GITHUB_ACTOR -p $env:GHCR_PAT
 docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 
 # Lancer les conteneurs
-docker compose -f "../app/docker-compose.yml" up -d
+docker compose -f ../app/docker-compose.yml up -d
 
 # Recharger Nginx pour appliquer la nouvelle conf
 docker exec nginx-proxy nginx -s reload
