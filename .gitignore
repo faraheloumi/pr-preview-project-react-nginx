@@ -1,0 +1,9 @@
+# Ignorer tous les certificats et le dossier certbot
+app/certs/
+app/certbot-www/
+
+# Pour être sûr, ignorer aussi tous les fichiers de type certificat
+*.pem
+*.crt
+*.key
+*.csr

@@ -9,8 +9,6 @@
 - [🌍 DuckDNS Configuration & Port Forwarding](#-duckdns-configuration-&-port-forwarding)
 - [⚙️ HTTPS Configuration](#https-configuration)
 - [🔐 PAT Configuration](#-pat-configuration)
-- [🚀 CI/CD Workflow](#-ci/cd-workflow)
-- [🗑️ PR Cleanup Process](#-pr-cleanup-process)
 - [📈 Results](#-resultat)
 - [🔧 Usage](#-usage)
 - [🔮 Future Considerations](#-future-considerations)
@@ -259,6 +257,71 @@ To allow GitHub Actions to push and pull Docker images from GitHub Container Reg
 3. Install the runner
 On your server, run the commands provided by GitHub.
 ```
+# Create a folder for the runner
+mkdir actions-runner && cd actions-runner  
+
+# Download the runner binary
+curl -o actions-runner-linux-x64-2.317.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.317.0/actions-runner-linux-x64-2.317.0.tar.gz  
+
+# Extract the package
+tar xzf ./actions-runner-linux-x64-2.317.0.tar.gz 
+```
+4. Configure the runner
+Run the configuration command provided by GitHub (with your repo and token):
+```
+./config.sh --url https://github.com/<username>/<repo> --token <TOKEN>
+```
+- ```<TOKEN>``` is generated automatically by GitHub when you add a runner.
+- You can also set a label (e.g., ```self-hosted```)
+5. Start the runner
+For Linux/macOS:
+```
+./run.sh
+```
+For Windows (PowerShell or Command Prompt):
+```
+.\run.cmd
+```
+You should see in your console that the runner is online.
+
+## 📈 Results
+After setting up this CI/CD pipeline, the following results were achieved:
+1. Automated Deployments
+    - Every push to the main branch automatically builds a new Docker image, pushes it to GHCR, and deploys it to the server.
+    - The base application is always live at: ```https://farahelloumi.duckdns.org```
+2. Pull Request Previews
+    - Each Pull Request triggers the creation of a dedicated preview environment.
+    - A new Docker container is deployed, and NGINX routes traffic using a subdomain: ```https://pr-<number>.farahelloumi.duckdns.org```
+    - This allows testing UI changes in real-time before merging.
+3. Cleanup Automation
+    - When a PR is closed or merged:
+        - The corresponding container is automatically removed.
+        - The NGINX route is cleaned up.
+        - The related image tag is deleted from GHCR.
+4. Secure Access
+    - All traffic is routed through NGINX with HTTPS enabled.
+    - Public previews can be tested securely from any device.
+5. Improved Development Workflow
+    - Developers and reviewers can instantly access live previews of PRs.
+    - Faster feedback loop and reduced risk of merging breaking UI changes.
+
+## 🔧 Usage
+Follow these steps to use this project on your own server:
+1. Clone the Repository
+```
+git clone https://github.com/faraheloumi/pr-preview-project-react-nginx.git
+cd pr-preview-project-react-nginx
+```
+2. Once the repository is set up with a self-hosted GitHub runner, all workflows run automatically. Make sure your runner is online in GitHub Actions before pushing any code.
+3. Configure Environment Variables
+- Set your GitHub Personal Access Token (PAT) as a repository secret (GHCR_PAT).
+- Make sure your DuckDNS subdomain points to your server’s public IP.
+3. Push to main Branch
+- The Main Deployment workflow triggers automatically.
+- It builds the Docker image, pushes it to GHCR, and deploys the base container react-app-main via the self-hosted runner.
+- The application becomes available at: ```https://<your-subdomain>.duckdns.org```
+4. Open a Pull Request (PR)
+- 
 
 
 ### 1️⃣ Local Build & Run

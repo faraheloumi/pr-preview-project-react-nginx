@@ -20,27 +20,27 @@ services:
       - "443:443"
     networks:
       - webnet
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./certs:/etc/letsencrypt
-      - ./certbot-www:/var/www/certbot
-    networks:
-      - webnet
-    depends_on:
-      - nginx-proxy
-    command:
-      - certonly
-      - --webroot
-      - --webroot-path=/var/www/certbot
-      - --email
-      - farah.elloumi2000@gmail.com
-      - --agree-tos
-      - --no-eff-email
-      - -d
-      - farahelloumi.duckdns.org
-      - --non-interactive
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes:
+  #     - ./certs:/etc/letsencrypt
+  #     - ./certbot-www:/var/www/certbot
+  #   networks:
+  #     - webnet
+  #   depends_on:
+  #     - nginx-proxy
+  #   command:
+  #     - certonly
+  #     - --webroot
+  #     - --webroot-path=/var/www/certbot
+  #     - --email
+  #     - farah.elloumi2000@gmail.com
+  #     - --agree-tos
+  #     - --no-eff-email
+  #     - -d
+  #     - farahelloumi.duckdns.org
+  #     - --non-interactive
 
 networks:
   webnet:
