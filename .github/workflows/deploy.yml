@@ -1,0 +1,27 @@
+name: Deploy Base and PR Previews
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    env:
+      GITHUB_ACTOR: ${{ github.actor }}
+      GHCR_PAT: ${{ secrets.GHCR_PAT }}
+      GITHUB_EVENT_NAME: ${{ github.event_name }}
+      GITHUB_EVENT_ACTION: ${{ github.event.action }}
+      GITHUB_EVENT_NUMBER: ${{ github.event.number }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy
+        shell: powershell
+        run: |
+          if ($env:GITHUB_EVENT_NAME -eq "push") {
+            ./scripts/deploy_base.ps1
+          } elseif ($env:GITHUB_EVENT_NAME -eq "pull_request") {
+            ./scripts/deploy_preview.ps1 $env:GITHUB_EVENT_NUMBER
+          }

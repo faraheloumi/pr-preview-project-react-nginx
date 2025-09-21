@@ -1,0 +1,18 @@
+name: Cleanup PR Preview
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup:
+    runs-on: self-hosted
+    env:
+      GITHUB_ACTOR: ${{ github.actor }}
+      GHCR_PAT: ${{ secrets.GHCR_PAT }}
+      GITHUB_EVENT_NUMBER: ${{ github.event.number }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cleanup
+        shell: powershell
+        run: ./scripts/remove_preview.ps1 $env:GITHUB_EVENT_NUMBER
