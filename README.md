@@ -18,17 +18,19 @@
 - [👨‍💻 Project By](#project-by)
 
 ## 📌 Project Overview
-This project implements a DevOps pipeline for PR previews of a React application using Docker, NGINX, DuckDNS, GitHub Actions, and GitHub Container Registry (GHCR).
+This project, developed by Farah Elloumi focuses on implementing a DevOps pipeline for PR previews of a React application using Docker, NGINX, DuckDNS, GitHub Actions, and GitHub Container Registry (GHCR).
 
 The goal is to automatically deploy the base application and every Pull Request (PR) to a public URL, so that UI changes can be reviewed in real time before merging.
 
-The base application is deployed at a public DuckDNS domain secured with HTTPS.
+The base application and all PR previews are served behind NGINX acting as a reverse proxy, with routing based on subdomains.
 
-For each open PR, a dedicated container image is built in CI, pushed to GHCR, pulled on the server, and served under a unique subdomain: ```https://pr-17.username.duckdns.org```.
+For each open PR, a dedicated container image is built in CI, pushed to GHCR, pulled on the server, and served under a unique subdomain.
+
+The base application is served at ```https://username.duckdns.org```, and all PR previews are routed through NGINX as a reverse proxy using subdomains ```https://pr-17.username.duckdns.org```.
 
 On PR merge or close, the preview container and its NGINX route are automatically cleaned up, and the registry tag is deleted.
 
-This setup ensures:
+### 🌟 The project must include:
 
 - 🔄 Automated CI/CD with GitHub Actions.
 
