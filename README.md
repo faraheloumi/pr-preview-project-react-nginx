@@ -1,4 +1,4 @@
-# 🚀 React PR Preview Pipeline with NGINX + Docker + GHCR
+# 🚀 React PR Preview Pipeline with NGINX + Docker + GHCR +DuckDns
 
 ## 📌 Project Overview
 This project implements a CI/CD pipeline to automatically build, deploy, and preview a React application.  
