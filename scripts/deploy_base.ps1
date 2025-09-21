@@ -12,8 +12,13 @@ docker pull ghcr.io/faraheloumi/pr-preview-project-react-nginx/web:latest
 # Lancer les conteneurs
 docker compose -f ../app/docker-compose.yml up -d
 
+
+docker exec nginx-proxy nginx -t
+
 # Recharger Nginx pour appliquer la nouvelle conf
 docker exec nginx-proxy nginx -s reload
+
+
 
 echo "✅ Main deployed: https://farahelloumi.duckdns.org" 
 
