@@ -22,9 +22,9 @@ This project implements a DevOps pipeline for PR previews of a React application
 
 The goal is to automatically deploy the base application and every Pull Request (PR) to a public URL, so that UI changes can be reviewed in real time before merging.
 
-The base application is deployed at a public DuckDNS domain secured with HTTPS (Let’s Encrypt).
+The base application is deployed at a public DuckDNS domain secured with HTTPS.
 
-For each open PR, a dedicated container image is built in CI, pushed to GHCR, pulled on the server, and served under a unique subdomain (e.g., https://pr-17.username.duckdns.org).
+For each open PR, a dedicated container image is built in CI, pushed to GHCR, pulled on the server, and served under a unique subdomain: ```https://pr-17.username.duckdns.org```.
 
 On PR merge or close, the preview container and its NGINX route are automatically cleaned up, and the registry tag is deleted.
 
