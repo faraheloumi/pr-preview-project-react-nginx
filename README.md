@@ -26,7 +26,7 @@ The base application and all PR previews are served behind NGINX acting as a rev
 
 For each open PR, a dedicated container image is built in CI, pushed to GHCR, pulled on the server, and served under a unique subdomain.
 
-The base application is served at ```https://username.duckdns.org```, and all PR previews are routed through NGINX as a reverse proxy using subdomains ```https://pr-17.username.duckdns.org```.
+The base application is served at ```https://username.duckdns.org```, and all PR previews are routed through NGINX as a reverse proxy using subdomains ```https://pr-number.username.duckdns.org```.
 
 On PR merge or close, the preview container and its NGINX route are automatically cleaned up, and the registry tag is deleted.
 
@@ -46,30 +46,39 @@ On PR merge or close, the preview container and its NGINX route are automaticall
 
 ```plaintext
 project/
-├─ app/ # React app (Vite)
-│ ├─ Dockerfile # Multi-stage build (Node + NGINX)
-│ ├─ index.html
-│ ├─ package.json
-│ ├─ vite.config.js
-│ └─ src/ # React source code
-│ ├─ App.jsx
-│ └─ main.jsx
 │
-├─ nginx/ # NGINX configuration files
-│ ├─ nginx.conf
-│ ├─ base.conf # Base site (yourname.duckdns.org, HTTPS)
-│ └─ pr-template.conf # Template for PR previews
+├─ .github/workflows/                  
+│  ├─ build-push.yml                   # GitHub Actions workflow to build and push Docker images to GHCR
+│  ├─ cleanup.yml                      # Workflow to remove PR preview containers and clean up registry tags
+│  └─ deploy.yml                       # Workflow to deploy the base app and PR previews to the server
 │
-├─ scripts/ # Deployment scripts
-│ ├─ deploy_base.sh
-│ ├─ deploy_preview.sh
-│ └─ remove_preview.sh
+├─ app/                                # React application (Vite) with Docker + NGINX setup
+│  ├─ nginx/                           # NGINX configuration directory
+│  │  ├─ sites-enabled/                
+│  │  │  ├─ 00-default-http.conf       # Default NGINX config that returns "404 Not Found" for invalid or unmatched URLs
+│  │  │  ├─ base.conf                  # NGINX config for the base application
+│  │  ├─ templates/
+│  │  │  ├─ pr-template.conf           # NGINX config template for PR preview subdomains
+│  │  └─ nginx.conf                    # Main NGINX configuration file
+│  │
+│  ├─ src/                             # React source code
+│  │  ├─ App.jsx                       # Main React component
+│  │  └─ main.jsx                      # Application entry point
+│  │
+│  ├─ docker-compose.pr.TEMPLATE.yml   # Docker Compose template for per-PR deployments
+│  ├─ docker-compose.yml               # Docker Compose config for the base app deployment
+│  ├─ Dockerfile                       # Multi-stage Dockerfile to build React app and serve via NGINX
+│  ├─ index.html                       # HTML entry file for the React app
+│  ├─ package.json                     # Project dependencies and scripts
+│  └─ vite.config.js                   # Vite build and development configuration
 │
-└─ .github/workflows/ # CI/CD workflows
+├─ scripts/                            
+│  ├─ deploy_base.ps1                  # PowerShell script to deploy the base application
+│  ├─ deploy_preview.ps1               # PowerShell script to deploy a PR preview container
+│  └─ remove_preview.ps1               # PowerShell script to remove a PR preview container
 │
-├─ build-and-deploy.yml
-│
-└─ cleanup.yml
+└─ README.md                           # Project documentation and setup guide
+
 ```
 
 ## ⚙️ Setup Instructions
