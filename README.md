@@ -183,6 +183,7 @@ $domain = "your-domain-here"
 Invoke-WebRequest -Uri "https://www.duckdns.org/update?domains=$domain&token=$token&ip=" -UseBasicParsing
 ```
 👉 Replace your-token-here with your DuckDNS token and your-domain-here with your subdomain (e.g., farahelloumi).
+
 5. Test the Script
 - Open PowerShell as Administrator.
 - Run:
@@ -211,7 +212,7 @@ This confirms that DuckDNS has updated your public IP.
 7. Configure Port Forwarding on Your Router:
 To make your server accessible from the internet:
     1. Log in to your router (in my case, Orange Fixbox) by opening a browser and typing your Default Gateway IP address.
-          Open  Command Prompt and type: ```ipconfig``` (on windows) and then look for the Default Gateway IP address.
+        - Open  Command Prompt and type: ```ipconfig``` (on windows) and then look for the Default Gateway IP address.
     2. Log in using the username/password on the sticker of your router (username: admin)     
     3. Go to Advanced Settings → Security → Virtual Server.
     4. Add a new rule:
