@@ -25,6 +25,7 @@ For each open PR, a dedicated container image is built in CI, pushed to GHCR, pu
 The base application is served at ```https://username.duckdns.org```, and all PR previews are routed through NGINX as a reverse proxy using subdomains ```https://pr-number.username.duckdns.org```.
 
 On PR merge or close, the preview container and its NGINX route are automatically cleaned up, and the registry tag is deleted.
+
 ---
 
 ## 📁 Directory Structure
