@@ -5,7 +5,6 @@
 - [📌 Project Overview](#-project-overview)
 - [📁 Directory Structure](#-directory-structure)
 - [🏗️ Project Architecture](#%EF%B8%8F-project-architecture)
-<!-- - [🔑 Prerequisites](#-prerequisites) -->
 - [🌍 DuckDNS Configuration and Port Forwarding](#-duckdns-configuration-and-port-forwarding)
 - [⚙️ HTTPS Configuration](#%EF%B8%8F-https-configuration)
 - [🔐 PAT Configuration](#-pat-configuration)
