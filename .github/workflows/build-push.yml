@@ -27,14 +27,21 @@ jobs:
         shell: powershell
         run: |
           $IMAGE = "ghcr.io/${{ github.repository }}/web"
+          $SHORT_SHA = "${{ github.sha }}".Substring(0,7)
+
+          docker build -t "${IMAGE}:sha-$SHORT_SHA" ./app
+
+          if ($env:GITHUB_EVENT_NAME -eq "push") {
+            # build from main branch
+            docker tag "${IMAGE}:sha-$SHORT_SHA" "${IMAGE}:latest"
+            docker push "${IMAGE}:latest"
+          }
 
           if ($env:GITHUB_EVENT_NAME -eq "pull_request") {
             $TAG = "pr-$env:GITHUB_EVENT_NUMBER"
-          } else {
-            $TAG = "latest"
+            docker tag "${IMAGE}:sha-$SHORT_SHA" "${IMAGE}:$TAG"
+            docker push "${IMAGE}:$TAG"
           }
 
-          docker build -t "${IMAGE}:latest" ./app
-          docker tag "${IMAGE}:latest" "${IMAGE}:${TAG}"
-          docker push "${IMAGE}:latest"
-          docker push "${IMAGE}:${TAG}"
+          # always push sha tag
+          docker push "${IMAGE}:sha-$SHORT_SHA"

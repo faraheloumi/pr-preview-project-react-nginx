@@ -225,10 +225,7 @@ docker compose up -d
 4. Issue the certificate using Certbot
 Run the following command to generate a valid Let's Encrypt certificate:
 ```
-docker compose run --rm certbot certonly \
-  --webroot --webroot-path=/var/www/certbot \
-  --email farah.elloumi2000@gmail.com --agree-tos --no-eff-email \
-  -d farahelloumi.duckdns.org --non-interactive
+docker run --rm -v letsencrypt:/etc/letsencrypt -v certbot-www:/var/www/certbot certbot/certbot certonly --webroot --webroot-path=/var/www/certbot --email farah.elloumi2000@gmail.com --agree-tos --no-eff-email -d farahelloumi.duckdns.org --non-interactive
 ```
 5. Verify certificate generation
 If ```fullchain.pem``` and ```privkey.pem``` are successfully generated, they will be visible in the Certbot container logs.
