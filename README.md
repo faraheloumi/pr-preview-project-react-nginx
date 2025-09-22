@@ -6,14 +6,12 @@
 - [📁 Directory Structure](#-directory-structure)
 - [🏗️ Project Architecture](#%EF%B8%8F-project-architecture)
 - [🔑 Prerequisites](#-prerequisites)
-- [🌍 DuckDNS Configuration & Port Forwarding](#-duckdns-configuration-&-port-forwarding)
+- [🌍 DuckDNS Configuration and Port Forwarding](#-duckdns-configuration-and-port-forwarding)
 - [⚙️ HTTPS Configuration](#https-configuration)
 - [🔐 PAT Configuration](#-pat-configuration)
+- [🖥️ Setup a Self-Hosted GitHub Runner](#-setup-a-self-hosted-github-runner)
 - [📈 Results](#-resultat)
 - [🔧 Usage](#-usage)
-- [🔮 Future Considerations](#-future-considerations)
-- [🤝 Contributing](#-contributing)
-- [👨‍💻 Project By](#project-by)
 
 ## 📌 Project Overview
 This project, developed by Farah Elloumi focuses on implementing a DevOps pipeline for PR previews of a React application using Docker, NGINX, DuckDNS, GitHub Actions, and GitHub Container Registry (GHCR).
@@ -80,7 +78,7 @@ project/
 ```
 
 ## 🏗️ Project Architecture
-## Full CI/CD Pipeline
+### Full CI/CD Pipeline
 ```text
                        +-----------------------+
                        |      Developers       |
@@ -132,7 +130,7 @@ project/
     +--------------------------------------------------------------------------+   
 ```
 
-## User Interaction Flow
+### User Interaction Flow
 
 ```text
 External User (Browser)
@@ -176,7 +174,7 @@ Before using this project, make sure you have the following installed and config
 - DuckDNS account with a registered subdomain.
 - Update your DNS to point to your server’s public IP.
 
-## 🌍 DuckDNS Configuration & Port Forwarding
+## 🌍 DuckDNS Configuration and Port Forwarding
 1. Login to DuckDNS
 - Go to ```https://www.duckdns.org```.
 - Create an account or log in with GitHub / Google / Twitter.
@@ -208,22 +206,45 @@ To make your server accessible from the internet:
     5. Save the settings to apply the configuration.
 
 ## ⚙️ HTTPS Configuration
-To generate the certificate and key, the following command was likely used:
-
-```plaintext
-sudo mkdir -p /etc/nginx/certs
-sudo openssl req -x509 -nodes -days 365 \
-  -newkey rsa:2048 \
-  -keyout /etc/nginx/certs/nginx-selfsigned.key \
-  -out /etc/nginx/certs/nginx-selfsigned.crt
+To enable valid HTTPS using Let’s Encrypt on your self-hosted runner, follow these steps:
+1. Prepare persistent directories
+In the repository folder on your server, create two directories to store certificates and the ACME webroot:
 ```
-- nginx-selfsigned.key → private key
-- nginx-selfsigned.crt → certificate
-Then, NGINX is configured to use them:
+mkdir -p certs/ certbot-www/
 ```
-ssl_certificate     /etc/nginx/certs/nginx-selfsigned.crt;
-ssl_certificate_key /etc/nginx/certs/nginx-selfsigned.key;
+- certs/ → will hold the Let's Encrypt certificates.
+- certbot-www/ → will be used as the ACME webroot for domain validation.
+***Tip***: Add both directories to .gitignore to prevent them from being pushed to the repository.
+2. Comment out SSL in NGINX temporarily
+- In ```app/nginx/sites-enabled/base.conf```, comment out the SSL block and any ```return 301 https://$host$request_uri;``` lines.
+- This ensures HTTP requests work for the ACME challenge.
+3. Start Docker Compose
 ```
+docker compose up -d
+```
+4. Issue the certificate using Certbot
+Run the following command to generate a valid Let's Encrypt certificate:
+```
+docker compose run --rm certbot certonly \
+  --webroot --webroot-path=/var/www/certbot \
+  --email farah.elloumi2000@gmail.com --agree-tos --no-eff-email \
+  -d farahelloumi.duckdns.org --non-interactive
+```
+5. Verify certificate generation
+If ```fullchain.pem``` and ```privkey.pem``` are successfully generated, they will be visible in the Certbot container logs.
+6. Uncomment SSL in NGINX
+- In ```base.conf```, uncomment the SSL block and the ```return 301 https://$host$request_uri; line```.
+7. Reload NGINX
+```
+docker exec nginx-proxy nginx -t
+docker exec nginx-proxy nginx -s reload
+```
+8. Test HTTPS
+- Open your browser and visit:
+```
+https://farahelloumi.duckdns.org
+```
+Your site should now be secured with a valid Let's Encrypt certificate.
 
 ## 🔐 PAT Configuration
 To allow GitHub Actions to push and pull Docker images from GitHub Container Registry (GHCR), you need to create and configure a Personal Access Token (PAT).
@@ -307,42 +328,32 @@ After setting up this CI/CD pipeline, the following results were achieved:
 
 ## 🔧 Usage
 Follow these steps to use this project on your own server:
-1. Clone the Repository
+1. Clone the Repository:
 ```
 git clone https://github.com/faraheloumi/pr-preview-project-react-nginx.git
 cd pr-preview-project-react-nginx
 ```
 2. Once the repository is set up with a self-hosted GitHub runner, all workflows run automatically. Make sure your runner is online in GitHub Actions before pushing any code.
-3. Configure Environment Variables
+3. Configure Environment Variables:
 - Set your GitHub Personal Access Token (PAT) as a repository secret (GHCR_PAT).
 - Make sure your DuckDNS subdomain points to your server’s public IP.
-3. Push to main Branch
+4. Push to main Branch:
 - The Main Deployment workflow triggers automatically.
 - It builds the Docker image, pushes it to GHCR, and deploys the base container react-app-main via the self-hosted runner.
 - The application becomes available at: ```https://<your-subdomain>.duckdns.org```
-4. Open a Pull Request (PR)
-- 
-
-
-### 1️⃣ Local Build & Run
-```
-# move into app folder
-cd app
-
-# install dependencies
-npm install
-npm install @vitejs/plugin-react --save-dev
-
-# test the react app locally
-npm run preview
-
-# build React app
-npm run build
-
-# build Docker image
-docker build -t pr-preview-demo:latest .
-
-# run locally on port 8080
-docker run -d -p 8080:80 pr-preview-demo:latest
-```
-
+5. Open a Pull Request (PR):
+- The PR Preview workflow runs automatically when we have changes in our code.
+- A Docker image is built and deployed for the PR under the container react-app-pr-<PR_NUMBER>.
+- NGINX routes the preview exclusively to: ```https://pr-<PR_NUMBER>.<your-subdomain>.duckdns.org```.
+- The base application at ```https://<your-subdomain>.duckdns.org``` remains unchanged and does not reflect the PR changes.
+6. Close a Pull Request (PR):
+- The Cleanup workflow runs automatically.
+- The preview container is stopped and removed.
+- The NGINX route is cleaned up.
+- The corresponding Docker image is deleted from GHCR.
+7. Merge a Pull Request (PR):
+- The base application at ```https://<your-subdomain>.duckdns.org``` is updated to include the merged changes.
+- The Cleanup workflow runs automatically.
+- The preview container is stopped and removed.
+- The NGINX route is cleaned up.
+- The corresponding Docker image is deleted from GHCR.
