@@ -1,4 +1,5 @@
 $ErrorActionPreference = "Stop"
+
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 
 $ComposeFile = Join-Path $RepoRoot "app\docker-compose.yml"
