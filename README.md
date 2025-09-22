@@ -10,7 +10,7 @@
 - [⚙️ HTTPS Configuration](#%EF%B8%8F-https-configuration)
 - [🔐 PAT Configuration](#-pat-configuration)
 - [🖥️ Setup a Self-Hosted GitHub Runner](#%EF%B8%8F-setup-a-self-hosted-github-runner)
-- [🔄 Secrets Rotation](#)
+- [🔄 Secrets Rotation](#-secrets-rotation)
 - [📈 Results](#-results)
 - [🔧 Usage](#-usage)
 
